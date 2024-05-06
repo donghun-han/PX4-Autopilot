@@ -69,8 +69,8 @@ void BoatDrive::Run()
 	}
 
 	hrt_abstime now = hrt_absolute_time();
-	const float dt = math::min((now - _time_stamp_last), 5000_ms) / 1e6f;
-	_time_stamp_last = now;
+	// const float dt = math::min((now - _time_stamp_last), 5000_ms) / 1e6f;
+	// _time_stamp_last = now;
 
 	if (_parameter_update_sub.updated()) {
 		parameter_update_s parameter_update;
@@ -91,9 +91,9 @@ void BoatDrive::Run()
 		vehicle_status_s vehicle_status{};
 
 		if (_vehicle_status_sub.copy(&vehicle_status)) {
-			const bool armed = (vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED);
-			const bool spooled_up = armed && (hrt_elapsed_time(&vehicle_status.armed_time) > _param_com_spoolup_time.get() * 1_s);
-			_boat_drive_kinematics.setArmed(spooled_up);
+			// const bool armed = (vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED);
+			// const bool spooled_up = armed && (hrt_elapsed_time(&vehicle_status.armed_time) > _param_com_spoolup_time.get() * 1_s);
+			// _boat_drive_kinematics.setArmed(spooled_up);
 			_acro_driving = (vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_ACRO);
 		}
 	}
@@ -106,27 +106,39 @@ void BoatDrive::Run()
 
 			if (_manual_control_setpoint_sub.copy(&manual_control_setpoint)) {
 				boat_drive_setpoint_s setpoint{};
-				setpoint.speed = manual_control_setpoint.throttle * math::max(0.f, _param_rdd_speed_scale.get()) * _max_speed;
-				setpoint.yaw_rate = manual_control_setpoint.roll * _param_rdd_ang_velocity_scale.get() * _max_angular_velocity;
+				setpoint.speed = manual_control_setpoint.throttle * math::max(0.f, _param_rdd_speed_scale.get());
+				setpoint.rudder_angle = manual_control_setpoint.roll * _param_rdd_ang_velocity_scale.get();
 
 				// TODO: Implement a yaw stabilized mode
 
 				setpoint.closed_loop_speed_control = false;
-				setpoint.closed_loop_yaw_rate_control = false;
+				setpoint.closed_loop_rudder_angle_control = false;
 
 
 				setpoint.timestamp = now;
 				_boat_drive_setpoint_pub.publish(setpoint);
+
+				actuator_motors_s actuator_motors{};
+				actuator_motors.control[0] = setpoint.speed;
+				actuator_motors.control[1] = setpoint.speed;
+				actuator_motors.timestamp = now;
+				_actuator_motors_pub.publish(actuator_motors);
+
+				actuator_servos_s actuator_servos{};
+				actuator_servos.control[0] = setpoint.rudder_angle;
+				actuator_servos.control[1] = setpoint.rudder_angle;
+				actuator_servos.timestamp = now;
+				_actuator_servos_pub.publish(actuator_servos);
 			}
 		}
 
 	} else if (_mission_driving) {
 		// TODO: Implement Mission Mode
-		continue;
+		return;
 	}
 
-	_boat_drive_control.control(dt);
-	_boat_drive_kinematics.allocate();
+	// _boat_drive_control.control(dt);
+	// _boat_drive_kinematics.allocate();
 }
 
 int BoatDrive::task_spawn(int argc, char *argv[])

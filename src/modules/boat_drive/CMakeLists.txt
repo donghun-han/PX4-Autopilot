@@ -31,9 +31,9 @@
 #
 ############################################################################
 
-add_subdirectory(BoatDriveControl)
-add_subdirectory(BoatDriveGuidance)
-add_subdirectory(BoatDriveKinematics)
+# add_subdirectory(BoatDriveControl)
+# add_subdirectory(BoatDriveGuidance)
+# add_subdirectory(BoatDriveKinematics)
 
 px4_add_module(
 	MODULE modules__boat_drive
@@ -42,11 +42,11 @@ px4_add_module(
 		BoatDrive.cpp
 		BoatDrive.hpp
 	DEPENDS
-		BoatDriveControl
-		BoatDriveGuidance
-		BoatDriveKinematics
+		# BoatDriveControl
+		# BoatDriveGuidance
+		# BoatDriveKinematics
 		px4_work_queue
-		modules__control_allocator # for parameter CA_R_REV
+		# modules__control_allocator # for parameter CA_R_REV
 	MODULE_CONFIG
 		module.yaml
 )

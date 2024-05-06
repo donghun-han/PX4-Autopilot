@@ -40,15 +40,18 @@
 #include <px4_platform_common/px4_work_queue/ScheduledWorkItem.hpp>
 #include <uORB/Publication.hpp>
 #include <uORB/Subscription.hpp>
+#include <uORB/PublicationMulti.hpp>
+#include <uORB/topics/actuator_motors.h>
+#include <uORB/topics/actuator_servos.h>
 #include <uORB/topics/boat_drive_setpoint.h>
 #include <uORB/topics/manual_control_setpoint.h>
 #include <uORB/topics/parameter_update.h>
 #include <uORB/topics/vehicle_control_mode.h>
 #include <uORB/topics/vehicle_status.h>
 
-#include "BoatDriveControl/BoatDriveControl.hpp"
-#include "BoatDriveGuidance/BoatDriveGuidance.hpp"
-#include "BoatDriveKinematics/BoatDriveKinematics.hpp"
+// #include "BoatDriveControl/BoatDriveControl.hpp"
+// #include "BoatDriveGuidance/BoatDriveGuidance.hpp"
+// #include "BoatDriveKinematics/BoatDriveKinematics.hpp"
 
 using namespace time_literals;
 
@@ -81,6 +84,8 @@ private:
 
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
 	uORB::Publication<boat_drive_setpoint_s> _boat_drive_setpoint_pub{ORB_ID(boat_drive_setpoint)};
+	uORB::PublicationMulti<actuator_motors_s> _actuator_motors_pub{ORB_ID(actuator_motors)};
+	uORB::PublicationMulti<actuator_servos_s> _actuator_servos_pub{ORB_ID(actuator_servos)};
 
 	bool _manual_driving = false;
 	bool _mission_driving = false;

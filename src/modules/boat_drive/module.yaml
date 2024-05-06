@@ -1,0 +1,36 @@
+module_name: Boat Drive
+
+parameters:
+  - group: Boat Drive
+    definitions:
+      BD_WHEEL_BASE:
+        description:
+          short: Wheel base
+          long: Distance from the center of the right wheel to the center of the left wheel
+        type: float
+        unit: m
+        min: 0.001
+        max: 100
+        increment: 0.001
+        decimal: 3
+        default: 0.5
+      BD_WHEEL_RADIUS:
+        description:
+          short: Wheel radius
+          long: Size of the wheel, half the diameter of the wheel
+        type: float
+        unit: m
+        min: 0.001
+        max: 100
+        increment: 0.001
+        decimal: 3
+        default: 0.1
+      BD_SPEED_SCALE:
+        description:
+          short: Manual speed scale
+        type: float
+        min: 0
+        max: 1
+        increment: 0.01
+        decimal: 2
+        default: 1
